@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MVRSH — Official</title>
+<meta name="description" content="MVRSH. Official site. Listen to Vybe City and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0B0709;
+    --bg-lift: #140D11;
+    --ink: #F4EDE7;
+    --ink-dim: #9B8A8C;
+    --wine: #8E2C3C;
+    --wine-bright: #C4405A;
+    --rose: #E8B4B8;
+    --border: rgba(232, 180, 184, 0.14);
+
+    --space-1: 0.5rem;
+    --space-2: 1rem;
+    --space-3: 1.5rem;
+    --space-4: 2.5rem;
+    --space-5: 4rem;
+    --space-6: 6rem;
+
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'Inter', -apple-system, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 1rem;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--wine); color: var(--ink); }
+
+  a { color: inherit; cursor: pointer; }
+
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--rose);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
+  /* fixed video background — page scrolls over it */
+  .bg-video {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: 0;
+  }
+
+  .bg-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(11, 7, 9, 0.3), rgba(11, 7, 9, 0.55));
+  }
+
+  /* ambient glow */
+  .glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 45% at 70% 8%, rgba(142, 44, 60, 0.22), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 15% 85%, rgba(142, 44, 60, 0.12), transparent 60%);
+    z-index: 0;
+  }
+
+  main { position: relative; z-index: 1; }
+
+  .wrap {
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: 0 var(--space-3);
+  }
+
+  /* ─── glass ─── */
+  .glass {
+    background: rgba(11, 7, 9, 0.3);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--border);
+  }
+
+  /* ─── nav ─── */
+  .nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+
+  .nav-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.375rem;
+    border-radius: 1rem;
+    text-decoration: none;
+    min-height: 44px;
+  }
+
+  .nav-brand svg { color: var(--wine-bright); flex: 0 0 auto; }
+
+  .nav-brand span {
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+  }
+
+  .nav-cta {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+    padding: 0.875rem 1.75rem;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    transition: border-color 250ms ease-out, background-color 250ms ease-out;
+  }
+
+  .nav-cta:hover { border-color: var(--wine-bright); background: rgba(142, 44, 60, 0.35); }
+
+  /* ─── hero chips ─── */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: var(--space-4);
+  }
+
+  .chip {
+    font-size: 0.625rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    padding: 0.625rem 1.125rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  /* ─── join the list ─── */
+  .join-line {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.125rem;
+    color: var(--ink-dim);
+    margin-top: var(--space-5);
+  }
+
+  .join {
+    position: relative;
+    max-width: 26rem;
+    margin: var(--space-3) auto 0;
+    border-radius: 999px;
+    text-align: left;
+  }
+
+  .join input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-radius: 999px;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 300;
+    padding: 1.0625rem 9.75rem 1.0625rem 1.5rem;
+  }
+
+  .join input::placeholder { color: var(--ink-dim); }
+
+  .join input:focus { outline: none; }
+
+  .join:focus-within { border-color: var(--wine-bright); }
+
+  .join button {
+    position: absolute;
+    right: 0.375rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--wine);
+    color: var(--ink);
+    border: none;
+    border-radius: 999px;
+    font-family: var(--sans);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.875rem 1.375rem;
+    cursor: pointer;
+    transition: background-color 250ms ease-out;
+  }
+
+  .join button:hover { background: var(--wine-bright); }
+
+  .join-done {
+    display: none;
+    margin-top: var(--space-4);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.125rem;
+    color: var(--rose);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ─── hero ─── */
+  .hero {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+
+  .hero-bg {
+    display: none; /* photo fallback — shown when the video is off (reduced motion) */
+    position: absolute;
+    inset: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    z-index: -1;
+    background-image:
+      linear-gradient(to bottom, rgba(11, 7, 9, 0.35) 0%, rgba(11, 7, 9, 0.15) 45%, rgba(11, 7, 9, 0.65) 80%, var(--bg) 100%),
+      url('assets/hero.webp');
+    background-size: cover;
+    background-position: center 30%;
+    background-repeat: no-repeat;
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(4.5rem, 19vw, 16rem);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .hero h1 .accent {
+    font-style: italic;
+    color: var(--wine-bright);
+  }
+
+  .hero-sub {
+    margin-top: var(--space-4);
+    max-width: 26rem;
+    color: var(--ink-dim);
+    font-size: 1rem;
+  }
+
+  .hero-sub em {
+    font-family: var(--serif);
+    color: var(--rose);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--ink-dim);
+    font-size: 0.6875rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2);
+    transition: color 200ms ease-out;
+  }
+
+  .hero-scroll:hover { color: var(--rose); }
+
+  .hero-scroll svg { animation: drift 2.4s ease-in-out infinite; }
+
+  @keyframes drift {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(6px); opacity: 1; }
+  }
+
+  /* ─── sections ─── */
+  section.wrap { padding-block: var(--space-6); }
+  footer.wrap { padding-block: var(--space-5); }
+
+  .label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--wine-bright);
+    margin-bottom: var(--space-4);
+  }
+
+  /* ─── statement ─── */
+  .statement p {
+    font-family: var(--serif);
+    font-size: clamp(1.75rem, 4.5vw, 3.25rem);
+    font-weight: 400;
+    line-height: 1.3;
+    max-width: 56rem;
+  }
+
+  .statement p em { color: var(--wine-bright); }
+  .statement p .dim { color: var(--ink-dim); }
+
+  /* ─── music ─── */
+  .track {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--border);
+    text-decoration: none;
+    transition: padding-left 250ms ease-out;
+  }
+
+  .track:last-of-type { border-bottom: 1px solid var(--border); }
+
+  .track:hover { padding-left: var(--space-3); }
+
+  .track:hover .track-title { color: var(--wine-bright); }
+  .track:hover .track-go { color: var(--rose); transform: translateX(4px); }
+
+  .track-num {
+    font-size: 0.75rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.2em;
+    flex: 0 0 3rem;
+  }
+
+  .track-main { flex: 1; min-width: 0; }
+
+  .track-title {
+    display: block;
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 3.5vw, 2.75rem);
+    font-weight: 400;
+    line-height: 1.15;
+    transition: color 250ms ease-out;
+  }
+
+  .track-meta {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: 0.8125rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.08em;
+  }
+
+  .track-go {
+    color: var(--ink-dim);
+    transition: color 250ms ease-out, transform 250ms ease-out;
+    flex: 0 0 auto;
+  }
+
+  /* ─── listen cta ─── */
+  .listen { text-align: center; }
+
+  .listen-line {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    color: var(--ink-dim);
+    margin-bottom: var(--space-4);
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--sans);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+    border: 1px solid var(--wine);
+    padding: 1.375rem 3rem;
+    min-height: 44px;
+    border-radius: 999px;
+    position: relative;
+    overflow: hidden;
+    transition: color 250ms ease-out, border-color 250ms ease-out;
+  }
+
+  .cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--wine);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 300ms ease-out;
+    z-index: -1;
+  }
+
+  .cta:hover { border-color: var(--wine-bright); }
+  .cta:hover::before { transform: scaleX(1); }
+
+  /* ─── footer ─── */
+  footer { border-top: 1px solid var(--border); }
+
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  .foot a {
+    text-decoration: none;
+    padding: var(--space-1) 0;
+    transition: color 200ms ease-out;
+  }
+
+  .foot a:hover { color: var(--rose); }
+
+  .credit {
+    margin-top: var(--space-4);
+    text-align: center;
+    font-size: 0.6875rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  .credit a {
+    color: var(--rose);
+    text-decoration: none;
+    padding: var(--space-1) 0;
+    transition: color 200ms ease-out;
+  }
+
+  .credit a:hover { color: var(--wine-bright); }
+
+  /* ─── reveal on scroll (only hidden when JS is running) ─── */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 600ms ease-out, transform 600ms ease-out;
+  }
+
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .bg-video { display: none; }
+    .hero-bg { display: block; }
+    .js .reveal { opacity: 1; transform: none; transition: none; }
+    .hero-scroll svg { animation: none; }
+    * { transition-duration: 0.01ms !important; }
+  }
+
+  @media (max-width: 40rem) {
+    .track-num { flex-basis: 2rem; }
+    section.wrap { padding-block: var(--space-5); }
+  }
+</style>
+</head>
+<body>
+<video class="bg-video" muted playsinline preload="auto" poster="assets/hero.webp" aria-hidden="true">
+  <source src="assets/hero-scrub.mp4" type="video/mp4">
+</video>
+<div class="bg-scrim" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<main>
+  <!-- HERO -->
+  <header class="hero wrap">
+    <div class="hero-bg" role="img" aria-label="Mvrsh — black and white portrait"></div>
+
+    <nav class="nav" aria-label="Main">
+      <a class="nav-brand glass" href="#top" aria-label="Mvrsh — home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+        </svg>
+        <span>MVRSH</span>
+      </a>
+      <a class="nav-cta glass" href="https://linktr.ee/jmarsh?utm_source=linktree_profile_share&ltsid=c5ce773c-d1ae-44ee-90bf-99cf61790628" target="_blank" rel="noopener">Listen</a>
+    </nav>
+
+    <h1>MV<span class="accent">R</span>SH</h1>
+    <p class="hero-sub">Late-night frequencies. Slow burn. <em>Vybe City</em> and everything after.</p>
+
+    <div class="chips" aria-label="Highlights">
+      <span class="chip glass">Vybe City — Out Now</span>
+      <span class="chip glass">Late-Night R&amp;B</span>
+      <span class="chip glass">New Music Soon</span>
+    </div>
+    <a class="hero-scroll" href="#music" aria-label="Scroll to music">
+      <span>Listen</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </header>
+
+  <!-- STATEMENT -->
+  <section class="statement wrap reveal">
+    <p><span class="dim">Music for the hours</span> <em>after midnight</em> <span class="dim">— when the lights are low and the city finally</span> exhales.</p>
+  </section>
+
+  <!-- MUSIC -->
+  <section id="music" class="wrap">
+    <p class="label reveal">The Sound</p>
+
+    <a class="track reveal" href="https://linktr.ee/jmarsh?utm_source=linktree_profile_share&ltsid=c5ce773c-d1ae-44ee-90bf-99cf61790628" target="_blank" rel="noopener">
+      <span class="track-num">01</span>
+      <span class="track-main">
+        <span class="track-title">Vybe City</span>
+        <span class="track-meta">Mvrsh — Apple Music</span>
+      </span>
+      <span class="track-go" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7m0 0H9m8 0v8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </a>
+
+    <a class="track reveal" href="https://linktr.ee/jmarsh?utm_source=linktree_profile_share&ltsid=c5ce773c-d1ae-44ee-90bf-99cf61790628" target="_blank" rel="noopener">
+      <span class="track-num">02</span>
+      <span class="track-main">
+        <span class="track-title">National Side&nbsp;N Day</span>
+        <span class="track-meta">J. Marsh &amp; Xzayvier — Apple Music</span>
+      </span>
+      <span class="track-go" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7m0 0H9m8 0v8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </a>
+  </section>
+
+  <!-- LISTEN CTA -->
+  <section class="listen wrap reveal">
+    <p class="listen-line">Everywhere you already are.</p>
+    <div class="cta-row">
+      <a class="cta" href="https://music.apple.com/us/artist/j-marsh/299100524" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.03 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.702"/></svg>
+        Apple Music
+      </a>
+      <a class="cta" href="https://open.spotify.com/artist/4Bji3h92aBzKSrLm57NeRZ" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        Spotify
+      </a>
+    </div>
+
+    <p class="join-line">First listens. Private drops. No noise.</p>
+    <form class="join glass" id="join" novalidate>
+      <label class="sr-only" for="join-email">Email address</label>
+      <input id="join-email" type="email" name="email" placeholder="Your email address" autocomplete="email" required>
+      <button type="submit">Join the list</button>
+    </form>
+    <p class="join-done" id="join-done" role="status">You're on the list. Stay close.</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="wrap">
+    <div class="foot">
+      <span>&copy; 2026 Mvrsh</span>
+      <a href="https://linktr.ee/jmarsh?utm_source=linktree_profile_share&ltsid=c5ce773c-d1ae-44ee-90bf-99cf61790628" target="_blank" rel="noopener">All Links</a>
+    </div>
+    <p class="credit">Website by <a href="https://soulytix.studio" target="_blank" rel="noopener">Soulytix Studios</a></p>
+  </footer>
+</main>
+
+<script>
+  document.documentElement.classList.add('js');
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    }
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+  /* scroll-scrubbed background video: scroll position = video timeline */
+  const vid = document.querySelector('.bg-video');
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let target = 0;
+    let current = 0;
+    let lastTick = 0;
+
+    const measure = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      target = max > 0 ? Math.min(scrollY / max, 1) : 0;
+      /* if the rAF loop is throttled (hidden tab, battery saver), set directly */
+      if (vid.duration && performance.now() - lastTick > 200) {
+        current = target;
+        vid.currentTime = current * (vid.duration - 0.05);
+      }
+    };
+
+    const tick = () => {
+      lastTick = performance.now();
+      current += (target - current) * 0.1;
+      if (vid.duration && Math.abs(target - current) > 0.0004) {
+        vid.currentTime = current * (vid.duration - 0.05);
+      }
+      requestAnimationFrame(tick);
+    };
+
+    addEventListener('scroll', measure, { passive: true });
+    addEventListener('resize', measure, { passive: true });
+    vid.addEventListener('loadedmetadata', () => { vid.pause(); measure(); current = target; vid.currentTime = current * (vid.duration - 0.05); });
+    measure();
+    requestAnimationFrame(tick);
+  }
+
+  const join = document.getElementById('join');
+  join.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('join-email');
+    if (!email.checkValidity()) { email.reportValidity(); return; }
+    join.style.display = 'none';
+    document.getElementById('join-done').style.display = 'block';
+  });
+</script>
+</body>
+</html>
