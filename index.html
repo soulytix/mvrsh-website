@@ -244,13 +244,25 @@
     border: 0;
   }
 
-  /* ─── hero ─── */
+  /* ─── hero ───
+     .hero-stage adds scroll runway; .hero pins (sticky) while the copy
+     cascades in, then releases and scrolls off normally */
   .hero {
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     position: relative;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .js .hero-stage { height: 175dvh; }
+    .js .hero {
+      position: sticky;
+      top: 0;
+      min-height: 0;
+      height: 100dvh;
+    }
   }
 
   .hero-bg {
@@ -524,6 +536,7 @@
 
 <main>
   <!-- HERO -->
+  <div class="hero-stage">
   <header class="hero wrap">
     <div class="hero-bg" role="img" aria-label="Mvrsh — black and white portrait"></div>
 
@@ -551,6 +564,7 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
   </header>
+  </div>
 
   <!-- MUSIC -->
   <section id="music" class="wrap">
@@ -637,10 +651,17 @@
 
     const frameSrc = (i) => 'assets/frames/f_' + String(i + 1).padStart(3, '0') + '.webp';
 
-    /* background stays locked on frame 0 while the hero copy cascades in,
+    /* the hero pins for the first 75vh of scroll (the runway) while the
+       copy cascades in; the background holds frame 0 until the runway ends,
        then the remaining scroll scrubs the full video */
-    const INTRO = 0.26;
-    const videoProgress = (p) => Math.max(0, (p - INTRO) / (1 - INTRO));
+    const introFrac = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      return max > 0 ? Math.min((innerHeight * 0.75) / max, 0.9) : 0.5;
+    };
+    const videoProgress = (p) => {
+      const f = introFrac();
+      return Math.min(Math.max((p - f) / (1 - f), 0), 1);
+    };
 
     const nearestLoaded = (idx) => {
       for (let d = 0; d < FRAMES; d++) {
@@ -680,18 +701,21 @@
       }
     };
 
-    /* hero copy cascades in as the scroll begins: MVRSH first, then the rest */
+    /* hero copy cascades in across the pinned runway: MVRSH first, then the rest.
+       Windows are fractions of the runway, not of the whole page */
     const fades = [
-      { el: document.querySelector('.hero h1'), s: 0.02, e: 0.1 },
-      { el: document.querySelector('.nav'), s: 0.02, e: 0.1 },
-      { el: document.querySelector('.hero-scroll'), s: 0.02, e: 0.1, noShift: true },
-      { el: document.querySelector('.hero-sub'), s: 0.07, e: 0.16 },
-      ...[...document.querySelectorAll('.chip')].map((c, i) => ({ el: c, s: 0.12 + i * 0.03, e: 0.2 + i * 0.03 }))
+      { el: document.querySelector('.hero h1'), s: 0.05, e: 0.4 },
+      { el: document.querySelector('.nav'), s: 0.05, e: 0.4 },
+      { el: document.querySelector('.hero-scroll'), s: 0.05, e: 0.4, noShift: true },
+      { el: document.querySelector('.hero-sub'), s: 0.35, e: 0.65 },
+      ...[...document.querySelectorAll('.chip')].map((c, i) => ({ el: c, s: 0.55 + i * 0.08, e: 0.8 + i * 0.08 }))
     ];
 
     const fadeUpdate = () => {
+      const fr = introFrac();
+      const ip = fr > 0 ? Math.min(current / fr, 1) : 1;
       for (const f of fades) {
-        const t = Math.min(Math.max((current - f.s) / (f.e - f.s), 0), 1);
+        const t = Math.min(Math.max((ip - f.s) / (f.e - f.s), 0), 1);
         f.el.style.opacity = t;
         if (!f.noShift) f.el.style.transform = 'translateY(' + (1 - t) * 20 + 'px)';
       }
