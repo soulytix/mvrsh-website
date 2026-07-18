@@ -149,24 +149,6 @@
 
   .nav-cta:hover { border-color: var(--wine-bright); background: rgba(142, 44, 60, 0.35); }
 
-  /* ─── hero chips ─── */
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: var(--space-4);
-  }
-
-  .chip {
-    font-size: 0.625rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-    padding: 0.625rem 1.125rem;
-    border-radius: 999px;
-    white-space: nowrap;
-  }
-
   /* ─── join the list ─── */
   .join-line {
     font-family: var(--serif);
@@ -295,18 +277,6 @@
     color: var(--wine-bright);
   }
 
-  .hero-sub {
-    margin-top: var(--space-4);
-    max-width: 26rem;
-    color: var(--ink-dim);
-    font-size: 1rem;
-  }
-
-  .hero-sub em {
-    font-family: var(--serif);
-    color: var(--rose);
-  }
-
   .hero-scroll {
     position: absolute;
     bottom: var(--space-4);
@@ -346,15 +316,15 @@
     margin-bottom: var(--space-4);
   }
 
-  /* ─── statement (rebirth quote, in the CTA section) ─── */
+  /* ─── statement (rebirth quote, under the hero) ─── */
   .statement {
-    margin: 0 auto var(--space-5);
-    max-width: 46rem;
+    margin-top: var(--space-4);
+    max-width: 40rem;
   }
 
   .statement p {
     font-family: var(--serif);
-    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    font-size: clamp(1.25rem, 2.6vw, 2rem);
     font-weight: 400;
     line-height: 1.4;
   }
@@ -552,13 +522,9 @@
     </nav>
 
     <h1 class="sfade">M<span class="accent">V</span>RSH</h1>
-    <p class="hero-sub sfade">Late-night frequencies. Slow burn. <em>Vybe City</em> and everything after.</p>
-
-    <div class="chips" aria-label="Highlights">
-      <span class="chip glass sfade">Vybe City — Out Now</span>
-      <span class="chip glass sfade">Late-Night R&amp;B</span>
-      <span class="chip glass sfade">New Music Soon</span>
-    </div>
+    <blockquote class="statement sfade">
+      <p><span class="dim">I've been quiet for a while, but silence has a way of sharpening purpose&hellip; This isn't just a name change&hellip;</span> <em>IT'S A MF REBIRTH.</em></p>
+    </blockquote>
     <a class="hero-scroll sfade" href="#music" aria-label="Scroll to music">
       <span>Listen</span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -595,9 +561,6 @@
 
   <!-- LISTEN CTA -->
   <section class="listen wrap reveal">
-    <blockquote class="statement">
-      <p><span class="dim">I've been quiet for a while, but silence has a way of sharpening purpose&hellip; This isn't just a name change&hellip;</span> <em>IT'S A MF REBIRTH.</em></p>
-    </blockquote>
     <p class="listen-line">Everywhere you already are.</p>
     <div class="cta-row">
       <a class="cta" href="https://music.apple.com/us/artist/j-marsh/299100524" target="_blank" rel="noopener">
@@ -707,9 +670,8 @@
       { el: document.querySelector('.hero h1'), s: 0.05, e: 0.4 },
       { el: document.querySelector('.nav'), s: 0.05, e: 0.4 },
       { el: document.querySelector('.hero-scroll'), s: 0.05, e: 0.4, noShift: true },
-      { el: document.querySelector('.hero-sub'), s: 0.35, e: 0.65 },
-      ...[...document.querySelectorAll('.chip')].map((c, i) => ({ el: c, s: 0.55 + i * 0.08, e: 0.8 + i * 0.08 }))
-    ];
+      { el: document.querySelector('.hero .statement'), s: 0.4, e: 0.8 }
+    ].filter((f) => f.el);
 
     const fadeUpdate = () => {
       const fr = introFrac();
