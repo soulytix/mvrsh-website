@@ -238,7 +238,7 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .js .hero-stage { height: 175dvh; }
+    .js .hero-stage { height: 280dvh; }
     .js .hero {
       position: sticky;
       top: 0;
@@ -316,21 +316,42 @@
     margin-bottom: var(--space-4);
   }
 
-  /* ─── statement (rebirth quote, under the hero) ─── */
-  .statement {
-    margin-top: var(--space-4);
-    max-width: 40rem;
+  /* ─── intro quote (opening title sequence, line by line) ─── */
+  .intro-quote {
+    max-width: 44rem;
+    margin-bottom: var(--space-4);
+    pointer-events: none;
   }
 
-  .statement p {
+  /* while the scripted intro runs, the quote overlays the name's space
+     so the two can cross-fade; otherwise it sits in flow above it */
+  @media (prefers-reduced-motion: no-preference) {
+    .js .intro-quote {
+      position: absolute;
+      left: var(--space-3);
+      right: var(--space-3);
+      top: 50%;
+      transform: translateY(-50%);
+      margin-bottom: 0;
+    }
+  }
+
+  .qline {
     font-family: var(--serif);
-    font-size: clamp(1.25rem, 2.6vw, 2rem);
+    font-size: clamp(1.125rem, 2.6vw, 1.875rem);
     font-weight: 400;
-    line-height: 1.4;
+    line-height: 1.45;
+    color: var(--ink-dim);
   }
 
-  .statement p em { color: var(--wine-bright); }
-  .statement p .dim { color: var(--ink-dim); }
+  .qline + .qline { margin-top: var(--space-2); }
+
+  .qline-punch {
+    margin-top: var(--space-3);
+    font-style: italic;
+    font-size: clamp(1.5rem, 3.6vw, 2.75rem);
+    color: var(--wine-bright);
+  }
 
   /* ─── music ─── */
   .track {
@@ -521,10 +542,14 @@
       <a class="nav-cta glass" href="https://linktr.ee/jmarsh?utm_source=linktree_profile_share&ltsid=c5ce773c-d1ae-44ee-90bf-99cf61790628" target="_blank" rel="noopener">Listen</a>
     </nav>
 
-    <h1 class="sfade">M<span class="accent">V</span>RSH</h1>
-    <blockquote class="statement sfade">
-      <p><span class="dim">I've been quiet for a while, but silence has a way of sharpening purpose&hellip; This isn't just a name change&hellip;</span> <em>IT'S A MF REBIRTH.</em></p>
+    <blockquote class="intro-quote">
+      <p class="qline sfade">I've been quiet for a while,</p>
+      <p class="qline sfade">but silence has a way of sharpening purpose&hellip;</p>
+      <p class="qline sfade">This isn't just a name change&hellip;</p>
+      <p class="qline qline-punch sfade">IT'S A MF REBIRTH.</p>
     </blockquote>
+
+    <h1 class="sfade">M<span class="accent">V</span>RSH</h1>
     <a class="hero-scroll sfade" href="#music" aria-label="Scroll to music">
       <span>Listen</span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -614,12 +639,12 @@
 
     const frameSrc = (i) => 'assets/frames/f_' + String(i + 1).padStart(3, '0') + '.webp';
 
-    /* the hero pins for the first 75vh of scroll (the runway) while the
-       copy cascades in; the background holds frame 0 until the runway ends,
-       then the remaining scroll scrubs the full video */
+    /* the hero pins for a 180vh runway: the quote reveals line by line over
+       a frozen frame, clears, then MVRSH lands. The background holds frame 0
+       for the whole runway and only starts scrubbing once it ends */
     const introFrac = () => {
       const max = document.documentElement.scrollHeight - innerHeight;
-      return max > 0 ? Math.min((innerHeight * 0.75) / max, 0.9) : 0.5;
+      return max > 0 ? Math.min((innerHeight * 1.8) / max, 0.9) : 0.5;
     };
     const videoProgress = (p) => {
       const f = introFrac();
@@ -666,20 +691,28 @@
 
     /* hero copy cascades in across the pinned runway: MVRSH first, then the rest.
        Windows are fractions of the runway, not of the whole page */
+    /* intro choreography, in fractions of the pinned runway:
+       four quote lines reveal in turn, clear, then the name lands */
     const fades = [
-      { el: document.querySelector('.hero h1'), s: 0.05, e: 0.4 },
-      { el: document.querySelector('.nav'), s: 0.05, e: 0.4 },
-      { el: document.querySelector('.hero-scroll'), s: 0.05, e: 0.4, noShift: true },
-      { el: document.querySelector('.hero .statement'), s: 0.4, e: 0.8 }
+      ...[...document.querySelectorAll('.qline')].map((el, i) => ({
+        el, s: 0.03 + i * 0.12, e: 0.15 + i * 0.12, os: 0.62, oe: 0.72
+      })),
+      { el: document.querySelector('.hero h1'), s: 0.68, e: 0.86 },
+      { el: document.querySelector('.nav'), s: 0.68, e: 0.86 },
+      { el: document.querySelector('.hero-scroll'), s: 0.80, e: 0.95, noShift: true }
     ].filter((f) => f.el);
+
+    const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
 
     const fadeUpdate = () => {
       const fr = introFrac();
       const ip = fr > 0 ? Math.min(current / fr, 1) : 1;
       for (const f of fades) {
-        const t = Math.min(Math.max((ip - f.s) / (f.e - f.s), 0), 1);
-        f.el.style.opacity = t;
-        if (!f.noShift) f.el.style.transform = 'translateY(' + (1 - t) * 20 + 'px)';
+        const tin = clamp01((ip - f.s) / (f.e - f.s));
+        const out = f.os === undefined ? 0 : clamp01((ip - f.os) / (f.oe - f.os));
+        f.el.style.opacity = tin * (1 - out);
+        /* transform tracks the entrance only, so lines fade out in place */
+        if (!f.noShift) f.el.style.transform = 'translateY(' + (1 - tin) * 20 + 'px)';
       }
     };
 
